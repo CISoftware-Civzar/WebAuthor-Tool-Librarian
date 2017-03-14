@@ -58,18 +58,18 @@ WebAuthorLibrarian::WebAuthorLibrarian(QWidget *parent)
     toolbar->addAction( setTitle );
 
     librarianList = new QListView( );
-    librarianEntry = new QTextEdit( );
+    librarianEntry = new LibrarianDocumentEdit( );
     librarianPreview = new QTextBrowser( );
-
-    librarianEntry->setLineWrapMode( QTextEdit::NoWrap );
 
     //set up widgets
     librarianList->setModel( model );
+    librarianList->setMinimumWidth( 180 );
+    librarianList->setMaximumWidth( 360 );
 
     //set up layout
     layout->addWidget( librarianList, 8 );
     layout->addWidget( librarianEntry, 30 );
-    layout->addWidget( librarianPreview, 15 );
+    //layout->addWidget( librarianPreview, 15 );
 
     view->setLayout( layout );
 
@@ -93,8 +93,15 @@ WebAuthorLibrarian::WebAuthorLibrarian(QWidget *parent)
     this->setMinimumSize( 720, 400 );
     this->resize( 720, 400 );
 
+    toolbar->setFloatable( false );
+    toolbar->setAllowedAreas( Qt::TopToolBarArea );
+    toolbar->setMovable( false );
+
+    librarianEntry->document()->setHtml( model->librarian_item_contents.first() );
+
     this->setCentralWidget( view );
     this->addToolBar( toolbar );
+    this->addToolBar( Qt::BottomToolBarArea, librarianEntry->getEditingToolbar() );
     this->setStatusBar( statusbar );
     this->setWindowTitle( tr( "Librarian" ) );
 
@@ -109,7 +116,7 @@ void WebAuthorLibrarian::setName() {
 void WebAuthorLibrarian::AddNewItem() {
     QString newItemName = tr( "New Item" );
     QString newItemContent = tr( "<h2>Enter title here</h2>\n<h3> What does it do? </h3>\n<p>Enter description here</p>"
-                                 "\n<h3>Example</h3>\n<p>&lt;\ntagname\n&gt;\n give an example here\n&lt;\n/tagname\n&gt;</p>" );
+                                 "\n<h3>Example</h3>\n<p>Give an example here</p>" );
 
     model->insertData( newItemName, newItemContent );
 
@@ -138,7 +145,7 @@ void WebAuthorLibrarian::showNameEditor() {
 
 void WebAuthorLibrarian::SaveItem() {
     if ( !switched ) {
-        QString updatedContent = librarianEntry->document()->toPlainText();
+        QString updatedContent = librarianEntry->document()->toHtml();
         model->librarian_item_contents[selected] = updatedContent;
         updateList();
     } else {
@@ -146,7 +153,7 @@ void WebAuthorLibrarian::SaveItem() {
     }
 
     //update layout preview and entry count
-    librarianPreview->setHtml( librarianEntry->document()->toPlainText() );
+    //librarianPreview->setHtml( librarianEntry->document()->toHtml() );
     showEntryCount();
 }
 
@@ -159,7 +166,7 @@ void WebAuthorLibrarian::handleIndexChange(const QModelIndex &index) {
     this->selected = index.row();
 
     //update view
-    librarianEntry->setPlainText( model->librarian_item_contents.at( index.row() ) );
+    librarianEntry->setHtml( model->librarian_item_contents.at( index.row() ) );
     lineEditName->setText( model->data( index, Qt::DisplayRole ).toString() );
 
     showEntryCount();
@@ -177,10 +184,10 @@ void WebAuthorLibrarian::newDocument() {
 
     if ( confirm == QMessageBox::Yes ) {
         model->dataReset();
-        librarianEntry->document()->setPlainText( "" );
         updateList();
         AddNewItem();
         showEntryCount();
+        librarianEntry->document()->setHtml( model->librarian_item_contents.first() );
     }
 }
 

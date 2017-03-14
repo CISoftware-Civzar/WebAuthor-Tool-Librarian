@@ -4,15 +4,13 @@
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QListView>
-#include <QTextEdit>
 #include <QStatusBar>
-#include <QToolBar>
-#include <QAction>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTextBrowser>
+#include "librariandocumentedit.h"
 
 #include "librarianlistmodel.h"
 
@@ -25,7 +23,7 @@ public:
     LibrarianListModel *model;
 
     QListView *librarianList;
-    QTextEdit *librarianEntry;
+    LibrarianDocumentEdit *librarianEntry;
     QTextBrowser *librarianPreview;
 
     QWidget *nameEditor;

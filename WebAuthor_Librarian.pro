@@ -25,7 +25,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         webauthorlibrarian.cpp \
-    librarianlistmodel.cpp
+    librarianlistmodel.cpp \
+    librariandocumentedit.cpp
 
 HEADERS  += webauthorlibrarian.h \
-    librarianlistmodel.h
+    librarianlistmodel.h \
+    librariandocumentedit.h
